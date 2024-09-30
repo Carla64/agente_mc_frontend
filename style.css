@@ -60,7 +60,7 @@ body {
 
 .chat-input {
     display: flex;
-    padding: 10px 10px 60px 10px;
+    padding: 10px;
     background: var(--color-input-bg);
     flex: 0 0 auto; /* No crecer ni encogerse */
 }
