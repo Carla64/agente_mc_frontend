@@ -12,17 +12,27 @@
     --color-text: #000000;
 }
 
+/* Aplicar box-sizing globalmente */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
 body {
     font-family: Arial, sans-serif;
     background: var(--color-body-bg);
     margin: 0;
     padding: 0;
     color: var(--color-text);
+    height: 100vh;
+    overflow: hidden; /* Evita el scroll vertical global */
 }
 
 .chat-container {
     display: flex;
     flex-direction: column;
+    width: 100%;
     max-width: 800px;
     height: 100vh;
     margin: 0 auto;
@@ -39,7 +49,7 @@ body {
 
 .chat-messages {
     flex: 1;
-    padding: 20px;
+    padding: 15px;
     overflow-y: auto;
     background: #fafafa;
 }
@@ -97,6 +107,11 @@ body {
 }
 
 @media screen and (max-width: 600px) {
+    .chat-header h1 {
+        font-size: 1.5em;
+        padding: 15px;
+    }
+
     .chat-messages {
         padding: 10px;
     }
@@ -105,7 +120,17 @@ body {
         max-width: 80%;
     }
 
-    .chat-header h1 {
-        font-size: 1.5em;
+    .chat-input {
+        padding: 8px;
+    }
+
+    .chat-input input {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .chat-input button {
+        font-size: 14px;
+        padding: 8px 16px;
     }
 }
