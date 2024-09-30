@@ -3,19 +3,6 @@ const chatMessages = document.getElementById('chat-messages');
 const userInput = document.getElementById('user-input');
 const sendButton = document.getElementById('send-button');
 
-// main.js
-
-function setVh() {
-    const vh = window.innerHeight * 0.01;
-    document.documentElement.style.setProperty('--vh', `${vh}px`);
-}
-
-// Ejecutar la función al cargar la página
-window.addEventListener('load', setVh);
-
-// Ejecutar la función al redimensionar la ventana
-window.addEventListener('resize', setVh);
-
 // Definir un identificador único para el usuario
 const senderId = 'test_user'; // Puedes generar dinámicamente un ID si lo prefieres
 
