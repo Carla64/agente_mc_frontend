@@ -1,10 +1,10 @@
 // Obtener referencias a los elementos del DOM
-const chatMessages = document.getElementById('chat-messages'); // Contenedor donde se mostrarán los mensajes del chat
-const userInput = document.getElementById('user-input'); // Campo de entrada donde el usuario escribe su mensaje
-const sendButton = document.getElementById('send-button'); // Botón para enviar el mensaje
+const chatMessages = document.getElementById('chat-messages');
+const userInput = document.getElementById('user-input');
+const sendButton = document.getElementById('send-button');
 
-// Define un identificador único para el usuario
-const senderId = 'test_user'; // Puedes generar dinámicamente un ID si lo prefieres para identificar de manera única al usuario
+// Definir un identificador único para el usuario
+const senderId = 'test_user'; // Puedes generar dinámicamente un ID si lo prefieres
 
 /**
  * Función para añadir un mensaje al chat.
@@ -12,20 +12,17 @@ const senderId = 'test_user'; // Puedes generar dinámicamente un ID si lo prefi
  * @param {string} text - El contenido del mensaje.
  */
 function appendMessage(sender, text) {
-    // Crear un nuevo elemento div para el mensaje
+    console.log(`appendMessage llamado con sender: ${sender}, text: ${text}`);
     const message = document.createElement('div');
-    message.classList.add('message', sender); // Añadir clases CSS para estilizar el mensaje según el remitente
+    message.classList.add('message', sender);
 
-    // Crear un contenedor para el contenido del mensaje
     const messageContent = document.createElement('div');
-    messageContent.classList.add('message-content'); // Añadir clase CSS para estilizar el contenido del mensaje
-    messageContent.textContent = text; // Asignar el texto del mensaje
+    messageContent.classList.add('message-content');
+    messageContent.textContent = text;
 
-    // Añadir el contenido al mensaje y el mensaje al contenedor de chat
     message.appendChild(messageContent);
     chatMessages.appendChild(message);
 
-    // Desplazar automáticamente hacia abajo para mostrar el mensaje más reciente
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
@@ -33,61 +30,80 @@ function appendMessage(sender, text) {
  * Función asíncrona para enviar un mensaje al bot y procesar la respuesta.
  */
 async function sendMessage() {
-    // Obtener y limpiar el texto ingresado por el usuario
     const text = userInput.value.trim();
-    if (text === '') return; // Si el mensaje está vacío, no hacer nada
+    console.log('sendMessage llamado con text:', text);
+    if (text === '') {
+        console.warn('El mensaje está vacío. No se enviará nada.');
+        return;
+    }
 
-    // Añadir el mensaje del usuario al chat y limpiar el campo de entrada
     appendMessage('user', text);
     userInput.value = '';
 
-    // Llamada a la API de RASA
+    // Deshabilitar los elementos de entrada mientras se procesa la solicitud
+    sendButton.disabled = true;
+    userInput.disabled = true;
+
     try {
-        // Realizar una solicitud POST al webhook de RASA con el mensaje del usuario
+        const requestBody = {
+            sender: senderId,
+            message: text
+        };
+        console.log('Enviando solicitud a RASA con body:', requestBody);
+
         const response = await fetch('http://35.202.125.104:5005/webhooks/rest/webhook', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json' // Especificar el tipo de contenido como JSON
+                'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                sender: senderId, // Identificador único del remitente
-                message: text // Mensaje del usuario
-            })
+            body: JSON.stringify(requestBody)
         });
 
-        // Verificar si la respuesta de la API fue exitosa
+        console.log('Respuesta recibida de RASA:', response);
+
         if (!response.ok) {
+            console.error('Respuesta no OK. Estado:', response.status, response.statusText);
             throw new Error('Error en la respuesta de la API');
         }
 
-        // Parsear la respuesta JSON de la API
         const data = await response.json();
+        console.log('Datos parseados de la respuesta:', data);
 
-        // RASA devuelve un array de respuestas, iterar sobre ellas
         if (Array.isArray(data) && data.length > 0) {
             data.forEach(botMessage => {
+                console.log('Procesando botMessage:', botMessage);
                 if (botMessage.text) {
-                    appendMessage('bot', botMessage.text); // Añadir el mensaje del bot al chat
+                    appendMessage('bot', botMessage.text);
                 }
-                // Si RASA devuelve otros tipos de mensajes (imágenes, botones, etc.), puedes manejarlos aquí
+                // Manejar otros tipos de mensajes aquí
             });
         } else {
-            // Si la respuesta no contiene mensajes de texto, mostrar un mensaje predeterminado
+            console.warn('La respuesta no contiene mensajes de texto.', data);
             appendMessage('bot', 'Lo siento, no entendí tu mensaje.');
         }
     } catch (error) {
-        // Manejar cualquier error que ocurra durante la solicitud
         console.error('Error al comunicarse con RASA:', error);
         appendMessage('bot', 'Lo siento, hubo un error al procesar tu mensaje.');
+    } finally {
+        // Rehabilitar los elementos de entrada
+        sendButton.disabled = false;
+        userInput.disabled = false;
+        userInput.focus();
+        console.log('Elementos de entrada habilitados.');
     }
 }
 
-// Añadir un listener al botón de enviar para que al hacer clic se envíe el mensaje
-sendButton.addEventListener('click', sendMessage);
+// Añadir un listener al botón de enviar
+sendButton.addEventListener('click', () => {
+    console.log('Botón de enviar clicado.');
+    sendMessage();
+});
 
-// Añadir un listener al campo de entrada para que al presionar 'Enter' se envíe el mensaje
-userInput.addEventListener('keypress', function (e) {
+// Añadir un listener al campo de entrada para enviar el mensaje al presionar 'Enter'
+userInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
+        e.preventDefault(); // Prevenir el comportamiento predeterminado
+        console.log('Tecla Enter presionada en el campo de entrada.');
         sendMessage();
     }
 });
