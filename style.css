@@ -10,6 +10,9 @@
     --color-button-bg: #aa4caf;
     --color-button-text: #ffffff;
     --color-text: #000000;
+    
+    /* Variable para la altura del viewport */
+    --vh: 100vh; /* Valor por defecto */
 }
 
 /* Aplicar box-sizing globalmente */
@@ -35,13 +38,12 @@ body {
     flex-direction: column;
     width: 100%;
     max-width: 800px;
-    height: 100vh; /* Mantener para ocupar toda la altura de la pantalla */
+    height: calc(var(--vh, 1vh) * 100); /* Usar la variable personalizada */
     margin: 0 auto;
     background: var(--color-container-bg);
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Asegurar que el header no ocupe demasiado espacio */
 .chat-header {
     background: var(--color-header-bg);
     color: var(--color-header-text);
@@ -50,7 +52,6 @@ body {
     flex: 0 0 auto; /* No crecer ni encogerse */
 }
 
-/* Configurar las áreas de mensajes y entrada */
 .chat-messages {
     flex: 1 1 auto; /* Crece para ocupar el espacio disponible */
     padding: 15px;
@@ -58,14 +59,6 @@ body {
     background: #fafafa;
 }
 
-.chat-input {
-    display: flex;
-    padding: 10px;
-    background: var(--color-input-bg);
-    flex: 0 0 auto; /* No crecer ni encogerse */
-}
-
-/* Estilos para los mensajes */
 .message {
     margin-bottom: 15px;
     display: flex;
@@ -88,7 +81,13 @@ body {
     word-wrap: break-word;
 }
 
-/* Estilos para el input y botón */
+.chat-input {
+    display: flex;
+    padding: 10px;
+    background: var(--color-input-bg);
+    flex: 0 0 auto; /* No crecer ni encogerse */
+}
+
 .chat-input input {
     flex: 1;
     padding: 10px;
