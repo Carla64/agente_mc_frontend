@@ -13,9 +13,7 @@
 }
 
 /* Aplicar box-sizing globalmente */
-*,
-*::before,
-*::after {
+*, *::before, *::after {
     box-sizing: border-box;
 }
 
@@ -25,8 +23,11 @@ body {
     margin: 0;
     padding: 0;
     color: var(--color-text);
-    height: 100vh;
-    overflow: hidden; /* Evita el scroll vertical global */
+    /* Removido height: 100vh y overflow: hidden */
+    min-height: 100vh; /* Asegura que el body al menos ocupe la altura de la pantalla */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .chat-container {
@@ -34,26 +35,37 @@ body {
     flex-direction: column;
     width: 100%;
     max-width: 800px;
-    height: 100vh;
+    height: 100vh; /* Mantener para ocupar toda la altura de la pantalla */
     margin: 0 auto;
     background: var(--color-container-bg);
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
+/* Asegurar que el header no ocupe demasiado espacio */
 .chat-header {
     background: var(--color-header-bg);
     color: var(--color-header-text);
     padding: 20px;
     text-align: center;
+    flex: 0 0 auto; /* No crecer ni encogerse */
 }
 
+/* Configurar las áreas de mensajes y entrada */
 .chat-messages {
-    flex: 1;
+    flex: 1 1 auto; /* Crece para ocupar el espacio disponible */
     padding: 15px;
     overflow-y: auto;
     background: #fafafa;
 }
 
+.chat-input {
+    display: flex;
+    padding: 10px;
+    background: var(--color-input-bg);
+    flex: 0 0 auto; /* No crecer ni encogerse */
+}
+
+/* Estilos para los mensajes */
 .message {
     margin-bottom: 15px;
     display: flex;
@@ -76,12 +88,7 @@ body {
     word-wrap: break-word;
 }
 
-.chat-input {
-    display: flex;
-    padding: 10px;
-    background: var(--color-input-bg);
-}
-
+/* Estilos para el input y botón */
 .chat-input input {
     flex: 1;
     padding: 10px;
@@ -106,6 +113,7 @@ body {
     filter: brightness(90%);
 }
 
+/* Media Queries Mejoradas para Móviles */
 @media screen and (max-width: 600px) {
     .chat-header h1 {
         font-size: 1.5em;
